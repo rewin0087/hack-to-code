@@ -28,6 +28,28 @@ class Base_Model extends CI_Model {
 	
 	/* Public Methods
 	-------------------------------*/
+	/*
+	* Title: Return Root Path
+	* Description: Return Upload Path
+	* Author : rewin
+	* @param string
+	* return array
+	*/
+	public function path($dir = NULL) {
+		$root	 = dirname(__FILE__).'/../../../';
+		$folders = glob('*', GLOB_ONLYDIR);
+		$path 	 = array();
+		
+		foreach($folders as $folder) {
+			$path[$folder] = $root.$folder; 
+		}
+		
+		if($dir) {
+			return $path[$dir];
+		} else {
+			return $path;	
+		}
+	}
 	
 	/*
 	* Title: Save data to database
@@ -36,10 +58,11 @@ class Base_Model extends CI_Model {
 	* return object
 	*/
 	public function save() {
-		return $this->db
+		$this->db
 			->insert($this->_table, $this->_data);
+		
+		return $this->db->insert_id();
 	}
-	
 	
 	/*
 	* Title: Save data to database
@@ -47,11 +70,15 @@ class Base_Model extends CI_Model {
 	* Author : rewin
 	* return object
 	*/
-	public function remove() {
-		return $this->db
+	public function remove($id = NULL) {
+		if($id) {
+			$this->_filters = array($this->_table.'_id' => $id);
+		}
+		$this->db
 			->delete($this->_table, $this->_filters);
+			
+		return $id; 
 	}
-	
 	
 	/*
 	* Title: Update data to database
@@ -59,10 +86,12 @@ class Base_Model extends CI_Model {
 	* Author : rewin
 	* return object
 	*/
-	public function update() {
-		return $this->db
-			->where($this->_filters)
+	public function update($id) {
+		$this->db
+			->where($this->_key, $id)
 			->update($this->_table, $this->_data);
+		
+		return $this->get($id);
 	}
 	
 	/*
@@ -105,19 +134,58 @@ class Base_Model extends CI_Model {
 	}
 	
 	/*
-	* Title: Get One Data from specific table
-	* Description: 
+	* Title: Get Data from specific table id = set| null
+	* Description: Return data if id is set return specific if not return all
 	* Author : rewin
 	* @param bigint
 	* return array
 	*/
-	public function get($id) {
-		return $this->db
+	public function get($id = NULL) {	
+		if(isset($id)) {
+			$row = $this->db
+				->select('*')
+				->from($this->_table)
+				->where($this->_key, $id)
+				->get()
+				->row_array();
+				
+			return !empty($row) ? $row : array();
+		} else {
+			$rows = $this->db
+				->get($this->_table)
+				->result_array();
+				
+			return !empty($rows[0]) ? $rows : array();
+		}
+	}
+	
+	/*
+	* Title: Search 
+	* Description: Search to table according to fields
+	* Author: rewin
+	* return array
+	*/
+	public function search($keyword, $start, $range) {
+		$rows = array();
+		
+		$this->db->start_cache();
+		
+		$object = $this->db
 			->select('*')
-			->from($this->_table)
-			->where($this->_key, $id)
-			->get()
-			->row_array();
+			->from($this->_table);
+		
+		foreach($this->_filters as $field) {
+			$object->or_like($field, $keyword);
+		}
+		
+		$this->db->stop_cache();
+		$rows['total'] 	= $object->count_all_results();
+		$rows['data'] 	= $object->limit($range,$start)
+				->get()
+				->result_array();
+		
+		$this->db->flush_cache();	
+		return !empty($rows) ? $rows : array();
 	}
 	
 	/*
@@ -133,15 +201,16 @@ class Base_Model extends CI_Model {
 			$query = $this->db
 				->select('*')
 				->from($this->_table);
-		$this->db->stop_cache();
 		
 		if($pagination) {
-			$query->count_all_results();
-			$rows = $query
+			$this->db->stop_cache();
+			$rows['total'] = $query->count_all_results();
+			$rows['data'] = $query
 				->limit($range, $start)
 				->get()
 				->result_array();					
 		} else {
+			$this->db->stop_cache();
 			$rows = $query
 				->get()
 				->result_array();
@@ -152,4 +221,27 @@ class Base_Model extends CI_Model {
 		return !empty($rows) ? $rows : array();	
 	}
 	
+	/*
+	* Title: Return All Filters 
+	* Description: Return All Filters Especially used on getting the columns or Filters that used on remove or any proccess that use filter property
+	* return array
+	*/
+	public function getFilters() {
+		return $this->_filters;	
+	}
+	
+	/*
+	* Title: Get Current Table Culumns
+	* Description: Get All Table Fields title
+	* return array
+	*/
+	public function getColumns() {
+		$fields = $this->db->query('Describe '.$this->_table)->result_array();
+	
+		foreach($fields as $field){
+			$this->_filters[] = $field['Field'];
+		}
+		
+		return $this;
+	}
 }

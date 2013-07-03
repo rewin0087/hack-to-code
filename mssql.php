@@ -1,6 +1,6 @@
 <?php //-->
 
-$serverName = "localhost";
+$serverName = "192.168.1.36";
 $connectionInfo = array( "Database"=>"test");
 
 $sql = 'SELECT *
@@ -40,5 +40,9 @@ class Mssql {
 	}
 	
 }
-
-print_r(Mssql::i($serverName, $connectionInfo)->query($sql)->getResult());
+$db = new PDO('mysql:host=127.0.0.1;dbname=bridgestone', 'root', 'developer');
+$stmt = $db->prepare("select * from user");
+$stmt->execute();
+$row = $stmt->fetchAll();
+print_r($row);
+//print_r(Mssql::i($serverName, $connectionInfo)->query($sql)->getResult());

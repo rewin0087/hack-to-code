@@ -1,15 +1,28 @@
 <?php //-->
-	$query 	= array('api' => 'uYfzrqspkVfEBXYSMeWZ', 'number' => $_GET['n'],
-			'message'	=> $_GET['m']);
-	$url 	= 'https://fireflyapi.com/api/sms';
+	$html = file_get_contents('http://bridgestone-admin.beehive-digital.com/articles/search?keyword=TECHNOLOGY');
 	
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($query));
-	$result = curl_exec($ch);
-	curl_close($ch);
+	function getImagesFromHtml($html) {
+		preg_match_all('/<img[^>]+>/i',$html, $result);
+		
+		return $result;
+	}
 	
-	print_r($result);
+	function getImageAttributes($images) {
+		$img = array();
+		echo '<pre>';
+		foreach($images[0] as $i => $image) {
+			preg_match_all('/(alt|title|src)=("[^"]*")/i',$image, $img[$image]);
+			
+			$images[0][$i] = array('image' => $image,
+				'src' => isset($img[$image][2][0]) && $img[$image][2][0] ? $img[$image][2][0] : '');
+		}
+		
+		return $images[0];
+	}
+	
+	function getImagesWithAttribFromHtml($html) {
+		$images = getImagesFromHtml($html);
+		
+		return getImageAttributes($images);
+	}
+	print_r(getImagesWithAttribFromHtml($html));

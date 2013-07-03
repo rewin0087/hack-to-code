@@ -165,7 +165,7 @@ class Base_Model extends CI_Model {
 	* Author: rewin
 	* return array
 	*/
-	public function search($keyword, $start, $range) {
+	public function search($keyword, $start, $range, $condition = array()) {
 		$rows = array();
 		
 		$this->db->start_cache();
@@ -174,6 +174,12 @@ class Base_Model extends CI_Model {
 			->select('*')
 			->from($this->_table);
 		
+		if(!empty($condition)) {
+			foreach($condition as $i => $value) {
+				$object->where($i, $value);
+			}
+		}
+
 		foreach($this->_filters as $field) {
 			$object->or_like($field, $keyword);
 		}
@@ -195,13 +201,19 @@ class Base_Model extends CI_Model {
 	* @param varchar
 	* return array
 	*/
-	public function returnAll($pagination = 0, $start = NULL, $range = NULL) {
+	public function returnAll($pagination = 0, $start = NULL, $range = NULL, $condition = array()) {
 		$rows = array();
 		$this->db->start_cache();
 			$query = $this->db
 				->select('*')
 				->from($this->_table);
-		
+
+		if(!empty($condition)) {
+			foreach($condition as $i => $value) {
+				$query->where($i, $value);
+			}
+		}
+
 		if($pagination) {
 			$this->db->stop_cache();
 			$rows['total'] = $query->count_all_results();

@@ -40,9 +40,39 @@ class Mssql {
 	}
 	
 }
+<<<<<<< HEAD
 $db = new PDO('mysql:host=127.0.0.1;dbname=bridgestone', 'root', 'developer');
 $stmt = $db->prepare("select * from user");
 $stmt->execute();
 $row = $stmt->fetchAll();
 print_r($row);
 //print_r(Mssql::i($serverName, $connectionInfo)->query($sql)->getResult());
+=======
+
+print_r(Mssql::i($serverName, $connectionInfo)->query($sql)->getResult());
+
+
+// sql function freetds
+
+function sql($sql)
+{
+	try {
+		$db = new PDO('odbc:Driver=FreeTDS; Server=192.168.1.36; Port=1433; Database=test; UID=sa; PWD=developer;');
+	} catch(PDOException $exception) {
+		die("Unable to open database.Error message:$exception.");
+	}
+
+	$statement = $db->prepare($sql);
+	$statement->execute();
+
+	/* Fetch all of the remaining rows in the result set */
+	print("Fetch all of the remaining rows in the result set:\n");
+	$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+	
+	return $result;
+}
+
+sql("SELECT CAST([user_id] AS BIGINT) AS [user_id], 
+			CAST([user_name] AS VARCHAR) AS [user_name], CAST([user_email] AS VARCHAR) AS [user_email] 
+		FROM [test].[dbo].[user]");
+>>>>>>> 2473786e202726b05fa49fe908470184c98a28ef

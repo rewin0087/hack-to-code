@@ -8,7 +8,7 @@ yum install freetds-devel
 yum install --enablerepo=remi php-mssql php-odbc
 
 // enable httpd request outside
-http://davejamesmiller.com/blog/connecting-php-to-microsoft-sql-server-on-debianubuntu
+https://www.centos.org/modules/newbb/viewtopic.php?topic_id=29646
 
 // enable mssql_connect
 http://davejamesmiller.com/blog/connecting-php-to-microsoft-sql-server-on-debianubuntu

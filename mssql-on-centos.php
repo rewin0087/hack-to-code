@@ -12,3 +12,6 @@ https://www.centos.org/modules/newbb/viewtopic.php?topic_id=29646
 
 // enable mssql_connect
 http://davejamesmiller.com/blog/connecting-php-to-microsoft-sql-server-on-debianubuntu
+
+//configure vsftpd
+https://www.digitalocean.com/community/articles/how-to-set-up-vsftpd-on-centos-6--2

@@ -25,11 +25,10 @@ def fibonacci (n)
 	puts total
 end
 
-
 def pigLatin(word)
 	alpha = ('a'..'z').to_a
 	vowels = %w[a e i o u]
-	consonants = Alpha - Vowels
+	consonants = alpha - vowels
 
 	w = ""
 	if vowels.include?(word[0]) && word[1] == word[2]
@@ -43,7 +42,7 @@ def pigLatin(word)
 		w = word[2..-1]+"quay"
 	elsif word[0..2] == "squ"
 	 	w = word[3..-1]+"squay"
-	else consonants.include?(word[0])
+	elsif consonants.include?(word[0])
 		w = word[1..-1] + word[0..0] + 'ay'
 	end
 	

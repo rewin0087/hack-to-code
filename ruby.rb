@@ -53,3 +53,12 @@ text = "pig banana trash happy duck glove egg inbox eight"
 puts text.split.map(&method(:pigLatin)).join(' ')
 text = "pig"
 puts pigLatin(text)
+
+
+def checkDuplicate (array)
+	if array.uniq! != nil
+		puts true
+	else
+		puts false
+	end
+end

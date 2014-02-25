@@ -1,34 +1,28 @@
 def palindrum (word)
-  n = word
-  rev = ""
-  i = n.length
-  
-  while i >= 0 do
-    rev += n[i].to_s
-    i-=1
-  end
-  
-  if n == rev
-  	puts "palindrum"
-  else
-  	puts "not a palindrum"
-  end
-  
-  puts "word is " + rev
+	n = word
+	rev = n.reverse
+	
+	if n == rev
+	  puts "palindrum"
+	else
+	  puts "not a palindrum"
+	end
+	
+	puts "word is " + rev
 end
 
 def fibonacci (n)
-		first_number = 0
-		second_number = 1
-		total = 0
-		
-		for i in 1...n
-			total = first_number + second_number
-			first_number = second_number
-			second_number = total
-		end
-		
-		puts total
+	first_number = 0
+	second_number = 1
+	total = 0
+	
+	for i in 1...n
+		total = first_number + second_number
+		first_number = second_number
+		second_number = total
+	end
+	
+	puts total
 end
 
 

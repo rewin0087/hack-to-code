@@ -50,10 +50,9 @@ def pigLatin(word)
 end
 
 text = "pig banana trash happy duck glove egg inbox eight"
-puts text.split.map(&method(:pigLatin)).join(' ')
+puts text.split.map{ |w| pigLatin(w)}.join(' ')
 text = "pig"
 puts pigLatin(text)
-
 
 def checkDuplicate (array)
 	if array.uniq! != nil
@@ -61,4 +60,8 @@ def checkDuplicate (array)
 	else
 		puts false
 	end
+end
+
+def dups (array)
+	return 	 array.map{ |i| break ar.count(i) > 1 ? true : false }
 end

@@ -36,5 +36,22 @@ private class FacebookPost extends AsyncTask<Void, Void, Void> {
             return null;
         }
 
-
+        protected void shareDialog() {
+                FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                .setPicture("http://mintywhite.com/wp-content/uploads/2012/10/fond-ecran-wallpaper-image-arriere-plan-hd-29-HD.jpg")
+                .build();
+                uiHelper.trackPendingDialogCall(shareDialog.present());
+        
+                // make request to the /me API
+                Request.newMeRequest(session, new Request.GraphUserCallback() {
+        
+                    // callback after Graph API response with user object
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+        
+                        Toast.makeText(getApplicationContext(), " Last Name " + user.getLastName(), Toast.LENGTH_LONG).show();
+        
+                    }
+                }).executeAsync();
+        }
     };

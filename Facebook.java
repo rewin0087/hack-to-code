@@ -479,6 +479,7 @@ public class Facebook {
 
         // Authentication error required
         else if(response.getError() != null && response.getError().getErrorCode() == -1) {
+            Auth().reSendPost(postType);
             Log.d("ERROR POST", response.getError().toString());
             Toast.makeText(activity, "Need Authentication, Please wait...", Toast.LENGTH_LONG).show();
         }

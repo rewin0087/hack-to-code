@@ -185,6 +185,7 @@ public class Facebook {
     /*
     * Run Facebook Authentication for as to have access from the user for us to create request for facebook
     *
+    * return self Object
     * */
     public Facebook Auth() {
         // start Facebook Login
@@ -218,6 +219,7 @@ public class Facebook {
     /*
     * Setting Session manualy
     *
+    * return self Object
     * */
     public Facebook setSession(Session session) {
         this.current_session = session;
@@ -509,6 +511,7 @@ public class Facebook {
     /*
     * Fallback resend post request
     *
+    * return self Object
     * */
     public Facebook reSendPost(String postType) {
 

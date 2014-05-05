@@ -252,7 +252,6 @@ public class Facebook {
                     "Please try again to send a post to facebook",
                     Toast.LENGTH_LONG)
                     .show();
-            return;
         }
     }
 
@@ -478,11 +477,10 @@ public class Facebook {
         }
 
         // Authentication error required
-        else if(response.getError() != null && response.getError().getErrorCode() == -1) {
-            Auth().reSendPost(postType);
+        /*else if(response.getError() != null && response.getError().getErrorCode() == -1) {
             Log.d("ERROR POST", response.getError().toString());
             Toast.makeText(activity, "Need Authentication, Please wait...", Toast.LENGTH_LONG).show();
-        }
+        }*/
 
         // Reauthentication required due to access token error
         else if(response.getError() != null && response.getError().getErrorCode() == 2500) {
@@ -505,7 +503,7 @@ public class Facebook {
         // unhandled error,
         else {
             Log.d("ERROR POST", response.getError().toString());
-            Toast.makeText(activity, "Failed to Post", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "Failed to Post, Please check your Internet connection or try again", Toast.LENGTH_LONG).show();
         }
     }
 

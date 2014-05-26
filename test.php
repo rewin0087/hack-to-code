@@ -9,32 +9,18 @@
 		return $number;
 	}
 	
-	function fibonacci($var) {
-		// first number
-		$st 	= 0;	
-		// final total
-		$final 	= 1;
-		// temp value cache
-		$temp 	= 0;
-		// second value
-		$nd 	= 1;
-		
-		// compute each until n
-		for($i = 0; $i < $var; $i++) {
-			// save first value
-			$array['temp']['f'+$i] = $final;
-			// add first number and second number (final = First + Second)
-			$final = $st + $nd;
-			// copy second number ( temp = Second)
-			$temp 	= $nd;
-			// save to cache temporary number for next add ( first = Second)
-			$st 	= $temp;
-			// move total to second number (First + Second)
-			$nd 	= $final;
-			
-		}
-		
-		return $array;
+	function fibonacci($n) {
+	    $total = 1;
+	    $first_n = 0;
+	    $second_n = 1;
+	    $sequence = [0];
+	
+	    for($i = 0; $i < $n; $i++) {
+	        $sequence[] = $total;
+	        $total = $sequence[$i] + $sequence[$i + 1];
+	    }
+	
+	    return implode($sequence, " , ");
 	}
 	
 	function palindrume($string) {

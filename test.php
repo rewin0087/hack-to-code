@@ -11,8 +11,6 @@
 	
 	function fibonacci($n) {
 	    $total = 1;
-	    $first_n = 0;
-	    $second_n = 1;
 	    $sequence = [0];
 	
 	    for($i = 0; $i < $n; $i++) {

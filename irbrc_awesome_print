@@ -1,0 +1,16 @@
+require 'rubygems'
+require 'awesome_print'
+AwesomePrint.irb!
+
+# returns the instance methods on klass
+# that aren't already on Object
+def m(klass)
+  klass.public_instance_methods - Object.public_instance_methods
+end
+
+
+# Log to STDOUT if in Rails
+if ENV.include?('RAILS_ENV') && !Object.const_defined?('RAILS_DEFAULT_LOGGER')
+  require 'logger'
+  RAILS_DEFAULT_LOGGER = Logger.new(STDOUT)
+end

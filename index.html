@@ -1,0 +1,399 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+      .instruction {
+  padding: 10px 5px 5px;
+  border-top: 1px dashed;
+}
+    </style>
+  </head>
+  <body>
+      <div class="container">
+        <h1>User Activity Summary Report</h1>
+
+      <h3>Breakdown by Action Type</h3>
+      <div class="instruction" id="breakdown-by-verb">
+          <div class="progress">
+            <div class="progress-bar progress-bar-success progress-bar-striped" id="previewed" role="progressbar" style="width: 0%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">
+              <span>Previewed <i id="previewed-label"></i></span>
+            </div>
+            <div class="progress-bar progress-bar-striped" id="viewed" role="progressbar" style="width: 0%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+              <span>Viewed <i id="viewed-label"></i></span>
+            </div>
+
+          </div>
+
+      </div>
+
+      <h3>Breakdown by Item Type</h3>
+      <div class="instruction">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped" id="folders" role="progressbar" style="width: 0%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">
+              <span>Folders <i id="folders-label"></i></span>
+            </div>
+            <div class="progress-bar progress-bar-success progress-bar-striped" id="documents" role="progressbar" style="width: 0%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+              <span>Documents <i id="documents-label"></i></span>
+            </div>
+          </div>
+      </div>
+
+      <h3>Detailed Activity Listing</h3>
+      <div class="instruction">
+        <div class="row">
+          <div class="col-md-12">
+            <select class="form-control user-ids">
+              <option value="">All Users</option>
+            </select>
+            <hr/>
+          </div>
+          <div class="col-md-12">
+            <h4>
+              <span>Total Entries:</span>
+              <span id="total-entries"></span>
+            </h4>
+            <table class="table" id="entries-table">
+              <thead>
+                <tr>
+                  <th>User Id</th>
+                  <th>Verb</th>
+                  <th>Item Type</th>
+                  <th>Item Id</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3>Filter by User</h3>
+      <div class="instruction">
+          <select class="form-control user-ids">
+            <option value="">All Users</option>
+          </select>
+      </div>
+
+      <div class="instruction">
+          <p>
+              5. Please amend the above logic to filter out
+              any duplicate entries (a duplicate is
+              the same user/action/item-type/item-id
+              combination).
+          </p>
+      </div>
+
+      <div class="instruction">
+          <p>
+              6. Finally, make it pretty - consider things like labels
+              for the breakdown bars, whether the structure of the page
+              could be improved, etc; please use your judgement.
+          </p>
+      </div>
+      </div>
+    <script>
+      $(document).ready(function() {
+        var log_entries = [
+          [27810, "viewed", "Folder", 681487],
+          [27810, "viewed", "Folder", 680043],
+          [27810, "viewed", "Folder", 680041],
+          [27810, "viewed", "Folder", 680037],
+          [27810, "viewed", "Folder", 680039],
+          [27810, "viewed", "Folder", 565573],
+          [27810, "previewed", "Document", 3457331],
+          [27810, "previewed", "Document", 3987301],
+          [27810, "previewed", "Document", 3966599],
+          [27810, "viewed", "Folder", 548435],
+          [27810, "viewed", "Document", 3987301],
+          [27810, "viewed", "Document", 3987301],
+          [26074, "viewed", "Folder", 238937],
+          [26074, "viewed", "Folder", 238837],
+          [26074, "viewed", "Folder", 237647],
+          [26074, "viewed", "Folder", 261757],
+          [26074, "viewed", "Folder", 240197],
+          [26074, "viewed", "Folder", 238897],
+          [26074, "viewed", "Folder", 238987],
+          [26074, "viewed", "Folder", 238977],
+          [26074, "previewed", "Document", 3967063],
+          [26074, "previewed", "Document", 3983803],
+          [26074, "previewed", "Document", 3987865],
+          [26074, "previewed", "Document", 3952399],
+          [26074, "previewed", "Document", 3966437],
+          [26074, "previewed", "Document", 3952401],
+          [26074, "previewed", "Document", 3988245],
+          [26074, "viewed", "Document", 3987865],
+          [26074, "viewed", "Document", 3987865],
+          [29316, "viewed", "Folder", 560729],
+          [29316, "viewed", "Folder", 565111],
+          [29316, "viewed", "Folder", 560761],
+          [29316, "previewed", "Document", 3943583],
+          [29316, "previewed", "Document", 3448817],
+          [29316, "previewed", "Document", 3399417],
+          [29316, "previewed", "Document", 3405233],
+          [29316, "viewed", "Folder", 682669],
+          [29316, "previewed", "Document", 3970291],
+          [29316, "previewed", "Document", 3970023],
+          [29316, "viewed", "Document", 3970291],
+          [29316, "viewed", "Document", 3970291],
+          [27740, "viewed", "Folder", 547693],
+          [27740, "viewed", "Folder", 547691],
+          [27740, "viewed", "Folder", 547695],
+          [27740, "previewed", "Document", 3986753],
+          [27740, "previewed", "Document", 3455159],
+          [30646, "viewed", "Folder", 686965],
+          [30646, "viewed", "Folder", 686931],
+          [30646, "viewed", "Folder", 686875],
+          [30646, "viewed", "Folder", 685599],
+          [30646, "viewed", "Folder", 686611],
+          [30646, "viewed", "Folder", 686607],
+          [30646, "viewed", "Folder", 686311],
+          [30646, "viewed", "Folder", 686253],
+          [30646, "viewed", "Folder", 686183],
+          [30646, "viewed", "Folder", 685961],
+          [30646, "viewed", "Folder", 685713],
+          [30646, "viewed", "Folder", 685707],
+          [30646, "viewed", "Folder", 685705],
+          [30646, "previewed", "Document", 3986955],
+          [30646, "previewed", "Document", 3984605],
+          [30646, "previewed", "Document", 3986747],
+          [30646, "previewed", "Document", 3984571],
+          [30646, "previewed", "Document", 3987555],
+          [30646, "previewed", "Document", 3987829],
+          [30646, "previewed", "Document", 3984603],
+          [27744, "viewed", "Folder", 547693],
+          [27744, "viewed", "Folder", 547691],
+          [27744, "viewed", "Folder", 547695],
+          [27744, "previewed", "Document", 3986753],
+          [27744, "previewed", "Document", 3455159],
+          [29030, "viewed", "Folder", 686965],
+          [29030, "viewed", "Folder", 686931],
+          [29030, "viewed", "Folder", 686875],
+          [29030, "viewed", "Folder", 685599],
+          [29030, "viewed", "Folder", 686611],
+          [29030, "viewed", "Folder", 686607],
+          [29030, "viewed", "Folder", 686311],
+          [29030, "viewed", "Folder", 686253],
+          [29030, "viewed", "Folder", 686183],
+          [29030, "viewed", "Folder", 685961],
+          [29030, "viewed", "Folder", 685713],
+          [29030, "viewed", "Folder", 685707],
+          [29030, "viewed", "Folder", 685705],
+          [29030, "previewed", "Document", 3986747],
+          [29030, "previewed", "Document", 3987829],
+          [29030, "previewed", "Document", 3987555],
+          [29030, "previewed", "Document", 3984571],
+          [29030, "previewed", "Document", 3984603],
+          [29030, "previewed", "Document", 3986955],
+          [29030, "previewed", "Document", 3984605],
+          [30526, "viewed", "Folder", 685733],
+          [30526, "previewed", "Document", 3987835],
+          [30526, "viewed", "Folder", 685731],
+          [30526, "previewed", "Document", 3987837],
+          [30526, "viewed", "Folder", 685733],
+          [30626, "viewed", "Folder", 686953],
+          [30626, "viewed", "Folder", 686951],
+          [30626, "viewed", "Folder", 686949],
+          [30626, "viewed", "Folder", 686945],
+          [30626, "viewed", "Folder", 686943],
+          [30626, "viewed", "Folder", 686941],
+          [30626, "viewed", "Folder", 686679],
+          [30626, "viewed", "Folder", 682775],
+          [30626, "viewed", "Folder", 682749],
+          [30626, "viewed", "Folder", 682745],
+          [30626, "viewed", "Folder", 682743],
+          [30626, "previewed", "Document", 3988179],
+          [30626, "previewed", "Document", 3986937],
+          [30626, "previewed", "Document", 3988207],
+          [30626, "previewed", "Document", 3986885],
+          [30626, "previewed", "Document", 3988183],
+          [30626, "previewed", "Document", 3988185],
+          [30626, "viewed", "Document", 3988183],
+          [30626, "viewed", "Document", 3988183],
+          [30526, "viewed", "Folder", 685747],
+          [30526, "previewed", "Document", 3984977],
+          [30526, "previewed", "Document", 3984979],
+          [30526, "previewed", "Document", 3984981],
+          [30526, "viewed", "Folder", 685795],
+          [30626, "viewed", "Document", 3988179],
+          [30626, "viewed", "Document", 3988179],
+          [30626, "previewed", "Document", 3987331],
+          [30626, "viewed", "Document", 3988179],
+          [30626, "viewed", "Document", 3988179],
+          [30626, "previewed", "Document", 3986903],
+          [30626, "previewed", "Document", 3986935],
+          [30626, "previewed", "Document", 3986931],
+          [30626, "viewed", "Document", 3986931],
+          [30626, "viewed", "Document", 3986931],
+          [30626, "previewed", "Document", 3986899],
+          [30626, "previewed", "Document", 3986901],
+          [30626, "previewed", "Document", 3986909],
+          [30626, "previewed", "Document", 3987315],
+          [30626, "previewed", "Document", 3987317],
+          [30626, "viewed", "Document", 3987317],
+          [30626, "viewed", "Document", 3987317],
+          [30626, "previewed", "Document", 3988193],
+          [30626, "previewed", "Document", 3988187],
+          [30626, "viewed", "Document", 3988187],
+          [30626, "viewed", "Document", 3988187],
+          [30638, "viewed", "Folder", 547651],
+          [30638, "viewed", "Folder", 547647],
+          [30638, "viewed", "Folder", 547649],
+          [30638, "previewed", "Document", 3987367],
+          [30638, "previewed", "Document", 3455157],
+          [30626, "previewed", "Document", 3988189],
+          [30626, "previewed", "Document", 3988205],
+          [30626, "previewed", "Document", 3988201],
+          [30626, "viewed", "Document", 3988205],
+          [30626, "viewed", "Document", 3988205],
+          [30626, "viewed", "Document", 3988187],
+          [30626, "viewed", "Document", 3988187],
+          [30234, "viewed", "Folder", 685733],
+          [30234, "viewed", "Folder", 685843],
+          [30234, "viewed", "Folder", 685835],
+          [30234, "viewed", "Folder", 685837],
+          [30234, "viewed", "Folder", 685833],
+          [30234, "viewed", "Folder", 685827],
+          [30234, "viewed", "Folder", 685795],
+          [30234, "viewed", "Folder", 685825],
+          [30234, "viewed", "Folder", 685823],
+          [30234, "previewed", "Document", 3985191],
+          [30626, "viewed", "Document", 3988189],
+          [30626, "viewed", "Document", 3988189],
+          [30234, "previewed", "Document", 3985211],
+          [30626, "viewed", "Document", 3988193],
+          [30626, "viewed", "Document", 3988193],
+          [30234, "created", "Folder", 686287],
+          [30626, "viewed", "Document", 3988203],
+          [30626, "viewed", "Document", 3988203],
+          [30646, "viewed", "Folder", 686965],
+          [30646, "viewed", "Folder", 686931],
+          [30646, "viewed", "Folder", 686875],
+          [30646, "viewed", "Folder", 685599],
+          [30646, "viewed", "Folder", 686611],
+          [30646, "viewed", "Folder", 686607],
+          [30646, "viewed", "Folder", 686311],
+          [30646, "viewed", "Folder", 686253],
+          [30646, "viewed", "Folder", 686183],
+          [30646, "viewed", "Folder", 685961],
+          [30646, "viewed", "Folder", 685713],
+          [30646, "viewed", "Folder", 685707],
+          [30646, "viewed", "Folder", 685705],
+          [30646, "previewed", "Document", 3987555],
+          [30646, "previewed", "Document", 3987829],
+          [30646, "previewed", "Document", 3986955],
+          [30646, "previewed", "Document", 3984571],
+          [30646, "previewed", "Document", 3984605],
+          [30646, "previewed", "Document", 3984603],
+          [30646, "previewed", "Document", 3986747],
+          [30646, "previewed", "Document", 3986625],
+          [30646, "previewed", "Document", 3986631],
+          [30646, "previewed", "Document", 3986629],
+          [30646, "previewed", "Document", 3986623],
+          [30646, "previewed", "Document", 3986627],
+          [30646, "viewed", "Folder", 681875],
+          [30646, "previewed", "Document", 3967757],
+          [30646, "viewed", "Document", 3967757]
+      ]
+      var uniqueLogEntries = []
+
+      log_entries.map((entry) => {
+      var isExist = uniqueLogEntries.find((i) => { return i[0] == entry[0] && i[1] == entry[1] && i[2] == entry[2] && i[3] == entry[3]})
+          if(!isExist){
+          uniqueLogEntries.push(entry)
+        }
+      })
+
+      var total = uniqueLogEntries.length
+      var percentagePerItem = 100 / parseFloat(total)
+      var previewed = uniqueLogEntries.filter((e) => { return e[1] == 'previewed' } ).length
+      var viewed = uniqueLogEntries.filter((e)  => { return e[1] == 'viewed' } ).length
+
+      var folders = uniqueLogEntries.filter((e) => { return e[2] == 'Folder' } ).length
+      var documents = uniqueLogEntries.filter((e) => { return e[2] == 'Document' } ).length
+
+      var computedPreviewed = previewed * percentagePerItem
+      var computedViewed = viewed * percentagePerItem
+
+      var computedFolders = folders * percentagePerItem
+      var computedDocuments = documents * percentagePerItem
+
+      $('#previewed').attr('style', 'width: ' + computedPreviewed + '%')
+      $('#previewed-label').html(computedPreviewed.toFixed(2) + '%')
+      $('#viewed').attr('style', 'width: ' + computedViewed + '%')
+      $('#viewed-label').html(computedViewed.toFixed(2) + '%')
+
+      $('#folders').attr('style', 'width: ' + computedFolders + '%')
+      $('#folders-label').html(computedFolders.toFixed(2) + '%')
+      $('#documents').attr('style', 'width: ' + computedDocuments + '%')
+      $('#documents-label').html(computedDocuments.toFixed(2) + '%')
+
+      $("#total-entries").html(total)
+
+      uniqueLogEntries.map((entry) => {
+          var row = "<tr>" +
+          "<td>" + entry[0] + "</td>" +
+          "<td>" + entry[1] + "</td>" +
+          "<td>" + entry[2] + "</td>" +
+          "<td>" + entry[3] + "</td>"
+        "</tr>"
+
+          $("#entries-table tbody").append(row)
+      })
+
+      var userIds = uniqueLogEntries.map((e) => { return e[0] }).filter((value, index, self) => { return self.indexOf(value) === index })
+
+      userIds.map((id) => {
+          $(".user-ids").append("<option>" + id + "</option>")
+      })
+
+      $(".user-ids").on("change", (e) => {
+        var value = e.target.value
+        var filteredLogEntries = []
+
+        if(value != "") {
+          filteredLogEntries = uniqueLogEntries.filter((e) => { return e[0] == value })
+        } else {
+          filteredLogEntries = uniqueLogEntries
+        }
+
+        var viewed = filteredLogEntries.filter((e) => { return e[1] == "viewed" }).length
+        var previewed = filteredLogEntries.filter((e) => { return e[1] == "previewed" }).length
+        var folders = filteredLogEntries.filter((e) => { return e[2] == 'Folder' } ).length
+        var documents = filteredLogEntries.filter((e) => { return e[2] == 'Document' } ).length
+        var percentagePerItem = 100 / filteredLogEntries.length
+
+        var computedViewed = viewed * percentagePerItem
+        var computedPreviewed = previewed * percentagePerItem
+        var computedFolders = folders * percentagePerItem
+        var computedDocuments = documents * percentagePerItem
+
+        $("#total-entries").html(filteredLogEntries.length)
+        $('#previewed').attr('style', 'width: ' + computedPreviewed + '%')
+        $('#previewed-label').html(computedPreviewed.toFixed(2) + '%')
+        $('#viewed').attr('style', 'width: ' + computedViewed + '%')
+        $('#viewed-label').html(computedViewed.toFixed(2) + '%')
+        $('#folders').attr('style', 'width: ' + computedFolders + '%')
+        $('#folders-label').html(computedFolders.toFixed(2) + '%')
+        $('#documents').attr('style', 'width: ' + computedDocuments + '%')
+        $('#documents-label').html(computedDocuments.toFixed(2) + '%')
+        $("#entries-table tbody").html("")
+
+        filteredLogEntries.map((entry) => {
+          var row = "<tr>" +
+            "<td>" + entry[0] + "</td>" +
+            "<td>" + entry[1] + "</td>" +
+            "<td>" + entry[2] + "</td>" +
+            "<td>" + entry[3] + "</td>"
+          "</tr>"
+
+          $("#entries-table tbody").append(row)
+        })
+      })
+      })
+
+    </script>
+  </body>
+</html>
